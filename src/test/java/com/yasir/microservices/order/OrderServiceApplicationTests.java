@@ -1,18 +1,23 @@
 package com.yasir.microservices.order;
 
+import com.yasir.microservices.order.stubs.InventoryClientStubs;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.testcontainers.containers.MySQLContainer;
+import wiremock.org.hamcrest.Matchers;
+
+import static wiremock.org.hamcrest.MatcherAssert.assertThat;
 
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureWireMock(port = 0)
+@AutoConfigureWireMock(port = 0)
 class OrderServiceApplicationTests {
 
 	@ServiceConnection
@@ -40,7 +45,7 @@ class OrderServiceApplicationTests {
                 }
                 """;
 
-//		InventoryStubs.stubInventoryCall("iphone_15", 1);
+		InventoryClientStubs.stubInventoryCall("iphone_15", 1);
 		var responseBodyString = RestAssured.given()
 				.contentType("application/json")
 				.body(submitOrderJson)
@@ -52,6 +57,6 @@ class OrderServiceApplicationTests {
 				.extract()
 				.body().asString();
 
-		//assertThat(responseBodyString, Matchers.is("Order Placed Successfully"));
+		assertThat(responseBodyString, Matchers.is("Order Placed Successfully"));
 	}
 }
