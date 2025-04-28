@@ -23,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
                 .id(productRequest.id())
                 .name(productRequest.name())
                 .description(productRequest.description())
+                .categories(productRequest.categories())
                 .price(productRequest.price())
                 .build();
         productRepository.save(product);
