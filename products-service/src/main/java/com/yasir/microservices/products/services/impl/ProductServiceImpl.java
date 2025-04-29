@@ -1,9 +1,10 @@
-package com.yasir.microservices.products.services;
+package com.yasir.microservices.products.services.impl;
 
 import com.yasir.microservices.products.dto.ProductRequest;
 import com.yasir.microservices.products.dto.ProductResponse;
 import com.yasir.microservices.products.model.Product;
 import com.yasir.microservices.products.repositories.ProductRepository;
+import com.yasir.microservices.products.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,20 +17,24 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-
     @Override
-    public ProductResponse createProduct(ProductRequest productRequest) {
+    public ProductResponse createProduct(ProductRequest productRequest, String  imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            throw new RuntimeException("Product image is required.");
+        }
         Product product = Product.builder()
                 .id(productRequest.id())
                 .name(productRequest.name())
                 .description(productRequest.description())
-                .categories(productRequest.categories())
+                .category(productRequest.category())
+                .imageUrl(imageUrl)
                 .price(productRequest.price())
                 .build();
         productRepository.save(product);
         log.info("Product created successfully with id {}", product.getId());
         return mapToProductResponse(product);
     }
+
 
     @Override
     public List<ProductResponse> getAllProduct() {
@@ -84,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
+                product.getImageUrl(),
                 product.getPrice()
         );
     }
