@@ -1,7 +1,6 @@
 package com.yasir.microservices.products.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yasir.microservices.products.dto.ProductRequest;
 import com.yasir.microservices.products.dto.ProductResponse;
 import com.yasir.microservices.products.services.impl.ProductServiceImpl;
