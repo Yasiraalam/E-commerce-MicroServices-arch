@@ -10,6 +10,6 @@ public interface ImageUploader {
 
     List<String> allFiles();
 
-    String PreSignedUrl();
+    String PreSignedUrl(String fileName);
 
 }

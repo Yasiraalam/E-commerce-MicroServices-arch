@@ -37,8 +37,7 @@ public class ProductController{
         try {
             ProductRequest productRequest1 = new ObjectMapper().readValue(productRequest, ProductRequest.class);
             String uploadedFileName = s3ImageUploader.fileUploadImage(image);
-            String imageUrl = "https://imagesuploadspringboot.s3.eu-north-1.amazonaws.com/" + uploadedFileName;
-            return productService.createProduct(productRequest1, imageUrl);
+            return productService.createProduct(productRequest1, uploadedFileName);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse product JSON or upload image", e);
         }
