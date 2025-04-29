@@ -1,25 +1,47 @@
 package com.yasir.microservices.products.controllers;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yasir.microservices.products.dto.ProductRequest;
 import com.yasir.microservices.products.dto.ProductResponse;
-import com.yasir.microservices.products.services.ProductServiceImpl;
+import com.yasir.microservices.products.services.impl.ProductServiceImpl;
+import com.yasir.microservices.products.services.impl.S3ImageUploader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static java.rmi.server.LogStream.log;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/product")
 public class ProductController{
     @Autowired
     private ProductServiceImpl productService;
 
-    @PostMapping
+    @Autowired
+    private S3ImageUploader s3ImageUploader;
+
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResponse createProduct(@RequestBody ProductRequest productRequest){
-           return productService.createProduct(productRequest);
+    public ProductResponse createProduct(
+            @RequestPart("product") String productRequest,
+            @RequestPart("image") MultipartFile image
+        ){
+        try {
+            ProductRequest productRequest1 = new ObjectMapper().readValue(productRequest, ProductRequest.class);
+            String uploadedFileName = s3ImageUploader.fileUploadImage(image);
+            String imageUrl = "https://imagesuploadspringboot.s3.eu-north-1.amazonaws.com/" + uploadedFileName;
+            return productService.createProduct(productRequest1, imageUrl);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse product JSON or upload image", e);
+        }
     }
 
     @GetMapping
