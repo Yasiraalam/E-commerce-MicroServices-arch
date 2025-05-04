@@ -43,5 +43,4 @@ Processes customer orders:
 4. If inventory is available, the order is confirmed and saved.
 5. All services are registered with **Eureka** and communicate internally using **OpenFeign Clients**.
 
-## 🧱 Architecture Diagram (Textual)
 
